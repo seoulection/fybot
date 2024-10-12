@@ -1,18 +1,19 @@
-const { SlashCommandBuilder } = require("discord.js");
+import { SlashCommandBuilder } from "discord.js";
+
 const sample = require("lodash.sample");
 
 const RESPONSES = ["YEAH", "NO", "THAT", "IT", "IF I KNOW", "IN' A"];
 
 module.exports = {
   data: new SlashCommandBuilder()
-            .setName("fuck")
-            .setDescription("Fuck yeah!")
-            .addStringOption(option =>
-              option
-                .setName("input")
-                .setDescription("The question")
-                .setRequired(true)
-            ),
+    .setName("fuck")
+    .setDescription("Fuck yeah!")
+    .addStringOption(option =>
+      option
+        .setName("input")
+        .setDescription("The question")
+        .setRequired(true)
+    ),
   async execute(interaction) {
     const input = interaction.options.getString("input");
 
