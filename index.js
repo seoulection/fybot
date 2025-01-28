@@ -28,6 +28,8 @@ client.once(Events.ClientReady, async readyClient => {
   const channel = await readyClient.channels.fetch(channelId)
 
   const job = new CronJob('0 * * * *', () => {
+    if (channel.members.size === 0) return
+
     const connection = joinVoiceChannel({
       channelId,
       guildId: channel.guild.id,
