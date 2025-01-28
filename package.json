@@ -12,7 +12,9 @@
   "dependencies": {
     "@discordjs/voice": "^0.18.0",
     "axios": "^1.4.0",
+    "cron": "^3.5.0",
     "discord.js": "^14.17.3",
+    "ffmpeg": "^0.0.4",
     "libsodium-wrappers": "^0.7.15",
     "pm2": "^5.3.0"
   },

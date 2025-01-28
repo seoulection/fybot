@@ -1,9 +1,12 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
-const { token } = require("./config.json");
+const { AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice')
+const { CronJob } = require('cron')
+const { channelId, token } = require("./config.json");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
+const audioPlayer = createAudioPlayer()
 
 client.commands = new Collection();
 
@@ -21,8 +24,36 @@ commandFiles.forEach(file => {
   }
 });
 
-client.once(Events.ClientReady, () => {
-  console.log("Ready!");
+client.once(Events.ClientReady, async readyClient => {
+  const channel = await readyClient.channels.fetch(channelId)
+
+  const job = new CronJob('0 * * * *', () => {
+    const connection = joinVoiceChannel({
+      channelId,
+      guildId: channel.guild.id,
+      adapterCreator: channel.guild.voiceAdapterCreator,
+      selfDeaf: false
+    })
+    const melody = createAudioResource('./public/melody.mp3')
+    const hour = (new Date().getHours() % 12) || 12
+    let count = 0;
+
+    connection.subscribe(audioPlayer)
+    audioPlayer.play(melody)
+
+    audioPlayer.on(AudioPlayerStatus.Idle, () => {
+      if (count === hour) {
+        count = 0
+        connection.disconnect()
+      } else {
+        const bell = createAudioResource('./public/bell.mp3')
+        audioPlayer.play(bell)
+        count++
+      }
+    })
+  })
+
+  job.start()
 });
 
 client.on(Events.InteractionCreate, async interaction => {
