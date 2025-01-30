@@ -8,6 +8,10 @@ const { channelId, token } = require("./config.json");
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 const audioPlayer = createAudioPlayer()
 
+let connection;
+let hour;
+let count = 0;
+
 client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, "commands");
@@ -27,36 +31,36 @@ commandFiles.forEach(file => {
 client.once(Events.ClientReady, async readyClient => {
   const channel = await readyClient.channels.fetch(channelId)
 
-  const job = new CronJob('0 * * * *', () => {
+  const job = new CronJob('* * * * *', () => {
     if (channel.members.size === 0) return
 
-    const connection = joinVoiceChannel({
+    connection = joinVoiceChannel({
       channelId,
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
       selfDeaf: false
     })
     const melody = createAudioResource('./public/melody.mp3')
-    const hour = (new Date().getHours() % 12) || 12
-    let count = 0;
+    hour = (new Date().getHours() % 12) || 12
+    count = 0;
 
     connection.subscribe(audioPlayer)
     audioPlayer.play(melody)
-
-    audioPlayer.on(AudioPlayerStatus.Idle, () => {
-      if (count === hour) {
-        count = 0
-        connection.disconnect()
-      } else {
-        const bell = createAudioResource('./public/bell.mp3')
-        audioPlayer.play(bell)
-        count++
-      }
-    })
   })
 
   job.start()
 });
+
+audioPlayer.on(AudioPlayerStatus.Idle, () => {
+  if (count >= hour) {
+    count = 0
+    connection.disconnect()
+  } else {
+    const bell = createAudioResource('./public/bell.mp3')
+    audioPlayer.play(bell)
+    count++
+  }
+})
 
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
