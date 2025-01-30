@@ -31,7 +31,7 @@ commandFiles.forEach(file => {
 client.once(Events.ClientReady, async readyClient => {
   const channel = await readyClient.channels.fetch(channelId)
 
-  const job = new CronJob('* * * * *', () => {
+  const job = new CronJob('0 * * * *', () => {
     if (channel.members.size === 0) return
 
     connection = joinVoiceChannel({
