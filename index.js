@@ -56,7 +56,7 @@ audioPlayer.on(AudioPlayerStatus.Idle, () => {
     count = 0
     connection.disconnect()
   } else {
-    const bell = createAudioResource('./public/churchbell.wav')
+    const bell = createAudioResource('./public/bell.wav')
     audioPlayer.play(bell)
     count++
   }
