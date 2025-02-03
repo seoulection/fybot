@@ -7,6 +7,7 @@ const { channelId, token } = require("./config.json");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 const audioPlayer = createAudioPlayer()
+const soundFiles = ['melody.mp3', 'bigbenintro.wav']
 
 let connection;
 let hour;
@@ -40,7 +41,8 @@ client.once(Events.ClientReady, async readyClient => {
       adapterCreator: channel.guild.voiceAdapterCreator,
       selfDeaf: false
     })
-    const melody = createAudioResource('./public/melody.mp3')
+    const soundFile = soundFiles[Math.floor(Math.random() * soundFiles.length)]
+    const melody = createAudioResource(`./public/${soundFile}`)
     hour = (new Date().getHours() % 12) || 12
     count = 0;
 
