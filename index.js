@@ -9,10 +9,12 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 const audioPlayer = createAudioPlayer()
 const generalIntros = ['melody.mp3', 'bigbenintro.wav']
 const smallChanceIntros = ['creep1.wav', 'creep2.wav']
+const bingBongBros = ['bing.wav', 'bong.wav']
 
 let connection;
 let hour;
 let count = 0;
+let playOrange = false;
 
 client.commands = new Collection();
 
@@ -22,11 +24,23 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith("
 const getRandomFile = () => {
   const number = Math.floor(Math.random() * 10)
 
-  if (number === 9) {
-    return smallChanceIntros[Math.floor(Math.random() * smallChanceIntros.length)]
+  if (number === 8) {
+    playOrange = true
+    return 'bingbong.wav'
+  } else if (number === 9) {
+    return chooseRandom(smallChanceIntros)
   } else {
-    return generalIntros[Math.floor(Math.random() * generalIntros.length)]
+    return chooseRandom(generalIntros)
   }
+}
+
+const chooseRandom = (list) => {
+  return list[Math.floor(Math.random() * list.length)]
+}
+
+const getBell = () => {
+  if (playOrange) return chooseRandom(bingBongBros)
+  return 'bell.mp3'
 }
 
 commandFiles.forEach(file => {
@@ -67,9 +81,10 @@ client.once(Events.ClientReady, async readyClient => {
 audioPlayer.on(AudioPlayerStatus.Idle, () => {
   if (count >= hour) {
     count = 0
+    playOrange = false
     connection.disconnect()
   } else {
-    const bell = createAudioResource('./public/bell.mp3')
+    const bell = createAudioResource(`./public/${getBell()}`)
     audioPlayer.play(bell)
     count++
   }
