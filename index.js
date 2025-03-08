@@ -14,6 +14,7 @@ const bingBongBros = ['bing.wav', 'bong.wav']
 let connection;
 let hour;
 let count = 0;
+let playExplosion = false;
 let playOrange = false;
 
 client.commands = new Collection();
@@ -24,7 +25,10 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith("
 const getRandomFile = () => {
   const number = Math.floor(Math.random() * 10)
 
-  if (number === 5 || number === 6) {
+  if (number === 3 || number === 4) {
+    playExplosion = true
+    return 'ac130.mp3'
+  } else if (number === 5 || number === 6) {
     return 'spetz.mp3'
   } else if (number === 7 || number === 8) {
     playOrange = true
@@ -41,6 +45,7 @@ const chooseRandom = (list) => {
 }
 
 const getBell = () => {
+  if (playExplosion) return 'explosion.mp3'
   if (playOrange) return chooseRandom(bingBongBros)
   return 'bell.mp3'
 }
@@ -83,6 +88,7 @@ client.once(Events.ClientReady, async readyClient => {
 audioPlayer.on(AudioPlayerStatus.Idle, () => {
   if (count >= hour) {
     count = 0
+    playExplosion = false
     playOrange = false
     connection.disconnect()
   } else {
