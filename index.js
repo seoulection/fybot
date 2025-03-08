@@ -24,7 +24,9 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith("
 const getRandomFile = () => {
   const number = Math.floor(Math.random() * 10)
 
-  if (number === 7 || number === 8) {
+  if (number === 5 || number === 6) {
+    return 'spetz.mp3'
+  } else if (number === 7 || number === 8) {
     playOrange = true
     return 'bingbong.wav'
   } else if (number === 9) {
