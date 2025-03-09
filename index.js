@@ -16,6 +16,8 @@ let hour;
 let count = 0;
 let playExplosion = false;
 let playOrange = false;
+let playRushE = false;
+let playRushECountSet = false;
 
 client.commands = new Collection();
 
@@ -25,7 +27,10 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith("
 const getRandomFile = () => {
   const number = Math.floor(Math.random() * 10)
 
-  if (number === 3 || number === 4) {
+  if (number === 1 || number === 2) {
+    playRushE = true
+    return 'rusheintro.mp3'
+  } else if (number === 3 || number === 4) {
     playExplosion = true
     return 'ac130.mp3'
   } else if (number === 5 || number === 6) {
@@ -47,6 +52,7 @@ const chooseRandom = (list) => {
 const getBell = () => {
   if (playExplosion) return 'explosion.mp3'
   if (playOrange) return chooseRandom(bingBongBros)
+  if (playRushE) return 'eee.mp3'
   return 'bell.mp3'
 }
 
@@ -86,10 +92,18 @@ client.once(Events.ClientReady, async readyClient => {
 });
 
 audioPlayer.on(AudioPlayerStatus.Idle, () => {
+  // RUSH E intro already contains one E
+  if (playRushE && !playRushECountSet) {
+    count = 1
+    playRushECountSet = true
+  }
+
   if (count >= hour) {
     count = 0
     playExplosion = false
     playOrange = false
+    playRushE = false
+    playRushECountSet = false
     connection.disconnect()
   } else {
     const bell = createAudioResource(`./public/${getBell()}`)
