@@ -14,6 +14,7 @@ const bingBongBros = ['bing.wav', 'bong.wav']
 let connection;
 let hour;
 let count = 0;
+let playAssClapper = false;
 let playExplosion = false;
 let playOrange = false;
 let playRushE = false;
@@ -27,19 +28,22 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith("
 const getRandomFile = () => {
   const number = Math.floor(Math.random() * 10)
 
-  if (number === 1 || number === 2) {
+  if (number === 1) {
     playRushE = true
     return 'rusheintro.mp3'
+  } else if (number === 2) {
+    return chooseRandom(smallChanceIntros)
   } else if (number === 3 || number === 4) {
     playExplosion = true
     return 'ac130.mp3'
-  } else if (number === 5 || number === 6) {
+  } else if (number === 5) {
     return 'spetz.mp3'
-  } else if (number === 7 || number === 8) {
+  } else if (number === 6 || number === 7) {
     playOrange = true
     return 'bingbong.wav'
-  } else if (number === 9) {
-    return chooseRandom(smallChanceIntros)
+  } else if (number === 8 || number === 9) {
+    playAssClapper = true
+    return 'clappingass.mp3'
   } else {
     return chooseRandom(generalIntros)
   }
@@ -50,6 +54,7 @@ const chooseRandom = (list) => {
 }
 
 const getBell = () => {
+  if (playAssClapper) return 'haha.mp3'
   if (playExplosion) return 'explosion.mp3'
   if (playOrange) return chooseRandom(bingBongBros)
   if (playRushE) return 'eee.mp3'
@@ -100,6 +105,7 @@ audioPlayer.on(AudioPlayerStatus.Idle, () => {
 
   if (count >= hour) {
     count = 0
+    playAssClapper = false
     playExplosion = false
     playOrange = false
     playRushE = false
