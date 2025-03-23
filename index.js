@@ -26,28 +26,27 @@ const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 
 const getRandomFile = () => {
-  return 'clappingass.mp3'
-  //const number = Math.floor(Math.random() * 10)
+  const number = Math.floor(Math.random() * 10)
 
-  //if (number === 1) {
-  //  playRushE = true
-  //  return 'rusheintro.mp3'
-  //} else if (number === 2) {
-  //  return chooseRandom(smallChanceIntros)
-  //} else if (number === 3 || number === 4) {
-  //  playExplosion = true
-  //  return 'ac130.mp3'
-  //} else if (number === 5) {
-  //  return 'spetz.mp3'
-  //} else if (number === 6 || number === 7) {
-  //  playOrange = true
-  //  return 'bingbong.wav'
-  //} else if (number === 8 || number === 9) {
-  //  playAssClapper = true
-  //  return 'clappingass.mp3'
-  //} else {
-  //  return chooseRandom(generalIntros)
-  //}
+  if (number === 1) {
+    playRushE = true
+    return 'rusheintro.mp3'
+  } else if (number === 2) {
+    return chooseRandom(smallChanceIntros)
+  } else if (number === 3 || number === 4) {
+    playExplosion = true
+    return 'ac130.mp3'
+  } else if (number === 5) {
+    return 'spetz.mp3'
+  } else if (number === 6 || number === 7) {
+    playOrange = true
+    return 'bingbong.wav'
+  } else if (number === 8 || number === 9) {
+    playAssClapper = true
+    return 'clappingass.mp3'
+  } else {
+    return chooseRandom(generalIntros)
+  }
 }
 
 const chooseRandom = (list) => {
@@ -55,13 +54,11 @@ const chooseRandom = (list) => {
 }
 
 const getBell = () => {
-  return 'haha.mp3'
-
-  //if (playAssClapper) return 'haha.mp3'
-  //if (playExplosion) return 'explosion.mp3'
-  //if (playOrange) return chooseRandom(bingBongBros)
-  //if (playRushE) return 'eee.mp3'
-  //return 'bell.mp3'
+  if (playAssClapper) return 'haha.mp3'
+  if (playExplosion) return 'explosion.mp3'
+  if (playOrange) return chooseRandom(bingBongBros)
+  if (playRushE) return 'eee.mp3'
+  return 'bell.mp3'
 }
 
 commandFiles.forEach(file => {
