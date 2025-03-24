@@ -1,6 +1,6 @@
 # Fuck Yeah Discord Bot
 
-**Make shitty decisions with your friends
+\*\*Make shitty decisions with your friends
 
 ## Getting started
 
