@@ -19,6 +19,7 @@
     "pm2": "^5.3.0"
   },
   "devDependencies": {
-    "lodash.sample": "^4.2.1"
+    "lodash.sample": "^4.2.1",
+    "prettier": "3.5.3"
   }
 }
