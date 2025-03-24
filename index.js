@@ -9,26 +9,17 @@ const {
 } = require('@discordjs/voice')
 const { CronJob } = require('cron')
 const { channelId, token } = require('./config.json')
+const { getRandomMelody } = require('./helpers/getSounds.js')
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 })
 const audioPlayer = createAudioPlayer()
-const generalIntros = ['melody.mp3', 'bigbenintro.wav']
-const smallChanceIntros = ['creep1.wav', 'creep2.wav']
-const bingBongBros = ['bing.wav', 'bong.wav']
-
-let bell
-let melody
 
 let connection
-let hour
-let count = 0
-let playAssClapper = false
-let playExplosion = false
-let playOrange = false
-let playRushE = false
-let playRushECountSet = false
+let bellState
+let countState = 0
+let hourState
 
 client.commands = new Collection()
 
@@ -37,40 +28,13 @@ const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file) => file.endsWith('.js'))
 
-const getRandomFile = () => {
-  const number = Math.floor(Math.random() * 10)
-
-  if (number === 1) {
-    playRushE = true
-    return 'rusheintro.mp3'
-  } else if (number === 2) {
-    return chooseRandom(smallChanceIntros)
-  } else if (number === 3 || number === 4) {
-    playExplosion = true
-    return 'ac130.mp3'
-  } else if (number === 5) {
-    return 'spetz.mp3'
-  } else if (number === 6 || number === 7) {
-    playOrange = true
-    return 'bingbong.wav'
-  } else if (number === 8 || number === 9) {
-    playAssClapper = true
-    return 'clappingass.mp3'
-  } else {
-    return chooseRandom(generalIntros)
-  }
-}
-
 const chooseRandom = (list) => {
   return list[Math.floor(Math.random() * list.length)]
 }
 
 const getBell = () => {
-  if (playAssClapper) return 'haha.mp3'
-  if (playExplosion) return 'explosion.mp3'
-  if (playOrange) return chooseRandom(bingBongBros)
-  if (playRushE) return 'eee.mp3'
-  return 'bell.mp3'
+  if (Array.isArray(bellState)) return chooseRandom(bellState)
+  return bellState
 }
 
 commandFiles.forEach((file) => {
@@ -98,37 +62,26 @@ client.once(Events.ClientReady, async (readyClient) => {
       adapterCreator: channel.guild.voiceAdapterCreator,
       selfDeaf: false,
     })
-    const soundFile = getRandomFile()
-    const melody = createAudioResource(`./public/${soundFile}`)
-    hour = new Date().getHours() % 12 || 12
-    count = 0
+    const { bell, count, melody } = getRandomMelody()
+
+    bellState = bell
+    countState = count
+    hourState = new Date().getHours() % 12 || 12
 
     connection.subscribe(audioPlayer)
-    audioPlayer.play(melody)
+    audioPlayer.play(createAudioResource(`./public/${melody}`))
   })
 
   job.start()
 })
 
 audioPlayer.on(AudioPlayerStatus.Idle, () => {
-  // RUSH E intro already contains one E
-  if (playRushE && !playRushECountSet) {
-    count = 1
-    playRushECountSet = true
-  }
-
-  if (count >= hour) {
-    count = 0
-    playAssClapper = false
-    playExplosion = false
-    playOrange = false
-    playRushE = false
-    playRushECountSet = false
+  if (countState >= hourState) {
+    countState = 0
     connection.disconnect()
   } else {
-    const bell = createAudioResource(`./public/${getBell()}`)
-    audioPlayer.play(bell)
-    count++
+    audioPlayer.play(createAudioResource(`./public/${getBell()}`))
+    countState++
   }
 })
 
