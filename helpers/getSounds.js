@@ -20,6 +20,7 @@ const getRandomMelody = () => {
     case 7:
       return { ...defaultMelody, bell: 'haha.mp3', melody: 'clappingass.mp3' }
     case 8:
+      return { ...defaultMelody, bell: 'lobell.mp3', melody: 'lomelody.mp3' }
     case 9:
       return { ...defaultMelody, melody: 'creep1.wav' }
   }
